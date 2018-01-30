@@ -25,10 +25,13 @@ namespace TurtleBot
 
             var services = ConfigureServices();
             services.GetRequiredService<LogService>();
+            services.GetRequiredService<WalletService>();
             await services.GetRequiredService<CommandHandlingService>().InitializeAsync(services);
 
             await _client.LoginAsync(TokenType.Bot, _config["token"]);
             await _client.StartAsync();
+
+            services.GetRequiredService<RainService>();
 
             await Task.Delay(-1);
         }
@@ -40,6 +43,8 @@ namespace TurtleBot
                 .AddSingleton(_client)
                 .AddSingleton<CommandService>()
                 .AddSingleton<CommandHandlingService>()
+                .AddSingleton<WalletService>()
+                .AddSingleton<RainService>()
                 // Logging
                 .AddLogging()
                 .AddSingleton<LogService>()

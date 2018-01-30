@@ -1,38 +1,84 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 
 namespace TurtleBot.Modules
 {
+    [Name("Help")]
     public class HelpModule : ModuleBase<SocketCommandContext>
     {
-        [Command("help")]
-        public async Task Help(string commandToGetHelpFor = null, [Remainder] string ignore = null)
+        private readonly CommandService _service;
+
+        public HelpModule(CommandService service)
         {
-            if(string.IsNullOrWhiteSpace(commandToGetHelpFor))
+            _service = service;
+        }
+
+        [Command("help")]
+        public async Task HelpAsync()
+        {
+            var builder = new EmbedBuilder()
             {
-                await ReplyAsync("Available commands: `height`, `hashrate`, `supply`, `difficulty`, `help`");
-            }
-            else
+                Color = new Color(114, 137, 218)
+            };
+
+            List<string> availableCommands = new List<string>();
+
+            foreach (var module in _service.Modules)
             {
-                switch(commandToGetHelpFor.ToLowerInvariant())
+                if (module.Name == "Help") continue;
+
+                foreach (var cmd in module.Commands)
                 {
-                    case "height":
-                        await ReplyAsync("`!height` Gets the current block height");
-                        return;
-                    case "hashrate":
-                        await ReplyAsync("`!hashrate` Gets the current global hashrate");
-                        return;
-                    case "supply":
-                        await ReplyAsync("`!supply` Gets the current circulating supply of TRTL");
-                        return;
-                    case "difficulty":
-                        await ReplyAsync("`!difficulty` Gets the current difficulty");
-                        return;
-                    case "help":
-                        await ReplyAsync("`!help <(optional) command>` Prints the list of commands or help for a specific command");
-                        return;
+                    var result = await cmd.CheckPreconditionsAsync(Context);
+                    if (result.IsSuccess)
+                        availableCommands.Add("``!" + cmd.Aliases.First() + "``");
                 }
             }
+
+            builder.AddField(x =>
+            {
+                x.Name = "Available commands:";
+                x.Value = string.Join(", ", availableCommands.Distinct());
+                x.IsInline = true;
+            });
+
+            await ReplyAsync("", false, builder.Build());
+        }
+
+        [Command("help")]
+        public async Task HelpAsync(string command)
+        {
+            var result = _service.Search(Context, command);
+
+            if (!result.IsSuccess)
+            {
+                await ReplyAsync($"Sorry, I couldn't find a command like **{command}**.");
+                return;
+            }
+
+            var builder = new EmbedBuilder()
+            {
+                Color = new Color(114, 137, 218),
+                Description = $"Here are some commands like **{command}**"
+            };
+
+            foreach (var match in result.Commands)
+            {
+                var cmd = match.Command;
+
+                builder.AddField(x =>
+                {
+                    x.Name = string.Join(", ", cmd.Aliases);
+                    x.Value = $"Parameters: {string.Join(", ", cmd.Parameters.Select(p => p.Name))}\n" + 
+                              $"{cmd.Summary}";
+                    x.IsInline = false;
+                });
+            }
+
+            await ReplyAsync("", false, builder.Build());
         }
     }
 }

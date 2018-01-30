@@ -1,16 +1,15 @@
 using System;
 using System.Threading.Tasks;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using Discord.Commands;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TurtleBot.Utilities;
 using System.Globalization;
 
 namespace TurtleBot.Modules
 {
+    [Name("Network information")]
     [Summary("Commands that make requests to the daemon")]
     public class DaemonModule : ModuleBase<SocketCommandContext>
     {
@@ -35,34 +34,38 @@ namespace TurtleBot.Modules
             }
         }
 
-        [Command("currentheight")]
-        [Alias("height", "bc_height")]
-        public async Task CurrentHeight([Remainder] string ignore = null)
+        [Command("height")]
+        [Alias("currentheight", "bc_height")]
+        [Summary("Gets the current block height")]
+        public async Task CurrentHeight()
         {
             JObject blockCountObject = await SendRpcRequest("getblockcount");
             await ReplyAsync($"The current block height is **{string.Format(CultureInfo.InvariantCulture, "{0:N0}", (long)blockCountObject["result"]["count"])}**");
         }
 
-        [Command("currenthashrate")]
-        [Alias("hashrate")]
-        public async Task CurrentHashrate([Remainder] string ignore = null)
+        [Command("hashrate")]
+        [Alias("currenthashrate")]
+        [Summary("Gets the current global hashrate")]
+        public async Task CurrentHashrate()
         {
             JObject lastBlockHeaderObject = await SendRpcRequest("getlastblockheader");
             await ReplyAsync($"The current global hashrate is **{HashFormatter.Format((double)lastBlockHeaderObject["result"]["block_header"]["difficulty"] / 30)}/s**");
         }
 
-        [Command("currentsupply")]
-        [Alias("supply")]
-        public async Task CurrentSupply([Remainder] string ignore = null)
+        [Command("supply")]
+        [Alias("currentsupply")]
+        [Summary("Gets the current circulating supply of TRTL")]
+        public async Task CurrentSupply()
         {
             JObject lastBlockHeaderObject = await SendRpcRequest("getlastblockheader");
             JObject blockObject = await SendRpcRequest("f_block_json", $"{{ \"hash\":\"{lastBlockHeaderObject["result"]["block_header"]["hash"]}\"}}");
             await ReplyAsync($"The current circulating supply is **{((double)blockObject["result"]["block"]["alreadyGeneratedCoins"]/100).ToString("n2")} TRTL**");
         }
 
-        [Command("currentdifficulty")]
-        [Alias("difficulty", "diff")]
-        public async Task CurrentDifficulty([Remainder] string ignore = null)
+        [Command("difficulty")]
+        [Alias("diff", "currentdifficulty")]
+        [Summary("Gets the current difficulty")]
+        public async Task CurrentDifficulty()
         {
             JObject lastBlockHeaderObject = await SendRpcRequest("getlastblockheader");
             await ReplyAsync($"The current difficulty is **{string.Format(CultureInfo.InvariantCulture, "{0:N0}", lastBlockHeaderObject["result"]["block_header"]["difficulty"])}**");
