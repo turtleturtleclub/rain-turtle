@@ -22,9 +22,10 @@ namespace TurtleBot.Modules
 
         [Command("rain")]
         [Summary("Checks the weather")]
-        public async Task Rain()
+        public async Task Rain([Remainder] string ignore = null)
         {
-            try {
+            try
+            {
                 switch (_rainService.State)
                 {
                     case RainServiceState.CheckingBalance:
@@ -33,7 +34,7 @@ namespace TurtleBot.Modules
                         var embed = new EmbedBuilder()
                             .WithColor(new Color(114, 137, 218))
                             .WithTitle($"Looks like the rain is still ```{missing}``` TRTL away...")
-                            .WithDescription($"Donate TRTL to make it rain again! ```\n{_rainService.BotWallet.Address}```")
+                            .WithDescription($"Donate to make it rain again! ```\n{_rainService.BotWallet.Address}```")
                             .WithThumbnailUrl(_config["rainImageUrlTRTL"])
                             .Build();
                         await ReplyAsync("", false, embed);
@@ -50,15 +51,17 @@ namespace TurtleBot.Modules
                         await ReplyAsync($"The sky is blue, no rain for today...");
                         return;
                 }
-            } catch (Exception) {
+            }
+            catch (Exception)
+            {
                 await ReplyAsync($"The sky is blue, no rain for today...");
             }
         }
 
         [Command("rain")]
         [Summary("Controls the rain function")]
-        [RequireUserPermission(GuildPermission.KickMembers)]
-        public async Task Rain(string subCommand)
+        [RequireOwner]
+        public async Task Rain(string subCommand, [Remainder] string ignore = null)
         {
             switch (subCommand.ToLowerInvariant())
             {

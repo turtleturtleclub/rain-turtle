@@ -21,8 +21,9 @@ namespace TurtleBot.Services
         {
             _logger = loggerFactory.CreateLogger("wallet");
             _client = new HttpClient();
-            _requestId = 0;
             _walletEndpoint = $"http://{config["serviceAddress"]}:{config["servicePort"]}/json_rpc";
+
+            _requestId = 0;
         }
 
         public async Task<bool> CheckAddress(string address)
@@ -30,7 +31,7 @@ namespace TurtleBot.Services
             JObject response = await SendRPCRequest("getBalance", $"{{\"address\":\"{address}\"}}");
             JToken errorToken;
 
-            // Checked address is a bot address, so it is valid.
+            // If there is no |error| value, the address is a bot address, so it is valid.
             if (!response.TryGetValue("error", out errorToken)) return true;
 
             int applicationCode = (int)errorToken["data"]["application_code"];
