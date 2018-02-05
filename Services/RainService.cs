@@ -259,7 +259,7 @@ namespace TurtleBot.Services
 
             var embed = new EmbedBuilder()
                 .WithColor(new Color(114, 137, 218))
-                .WithTitle($"``{balance / 100.0M}`` TRTL WAS GIVEN TO ``{wallets}`` TURTLES")
+                .WithTitle($"{balance / 100.0M} TRTL WAS GIVEN TO {wallets} TURTLES")
                 .WithUrl($"http://turtle-coin.com/?hash={txId}#blockchain_transaction")
                 .WithDescription(desc)
                 .WithThumbnailUrl(_config["rainImageUrlTRTL"])
