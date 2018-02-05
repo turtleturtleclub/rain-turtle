@@ -21,7 +21,7 @@ namespace TurtleBot.Services
         {
             _logger = loggerFactory.CreateLogger("wallet");
             _client = new HttpClient();
-            _walletEndpoint = $"http://{config["serviceAddress"]}:{config["servicePort"]}/json_rpc";
+            _walletEndpoint = $"http://{config["walletdServiceAddress"]}:{config["walletdServicePort"]}/json_rpc";
 
             _requestId = 0;
         }

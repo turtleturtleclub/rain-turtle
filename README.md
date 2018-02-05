@@ -20,7 +20,17 @@ Get a bot token by making an app (instructions [here](https://discord.foxbot.me/
 Create a file called `config.json` with the following contents
 ```
 {
-	"token": "<your token here>"
+	"token": "<your token here>",
+	"walletdServiceAddress": "localhost",
+	"walletdServicePort": 8050,
+	"rainChannelId": 407757902695235584,
+	"rainCheckIntervalS": 10,
+	"rainAnnounceDelayS": 10,
+	"rainRegisterDelayS": 90,
+	"rainBalanceThreshold": 100000,
+	"rainImageUrlAnnouncement": "<image url>",
+	"rainImageUrlRegistration": "<image url>",
+	"rainImageUrlTRTL": "<image url>"
 }
 ```
 
