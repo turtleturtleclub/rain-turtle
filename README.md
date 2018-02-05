@@ -1,7 +1,7 @@
-TurtleBot
-=========
+TurtleBotRain
+=============
 
-This is the source for TurtleBot, used on the TurtleCoin discord server
+This is the source for TurtleBotRain, used on the [TurtleCoin](https://discord.gg/UKsNX6F) discord server.
 
 ## Setting Up
 
@@ -13,7 +13,7 @@ For an IDE I recommend Visual Studio Code.
 
 Get a bot token by making an app (instructions [here](https://discord.foxbot.me/docs/guides/getting_started/intro.html))
 
-Create a file called `config.json` with the following contents
+Create a file called `config.json` with the following contents:
 ```
 {
 	"token": "<your token here>",
@@ -29,6 +29,8 @@ Create a file called `config.json` with the following contents
 	"rainImageUrlTRTL": "<image url>"
 }
 ```
+
+You also need ``walletd`` and ``turtlecoind`` running on the localhost (or on another machine). Set ``walletdServiceAddress`` and ``walletdServicePort`` accordingly.
 
 **DO NOT SHARE YOUR TOKEN WITH ANYBODY**
 
