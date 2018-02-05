@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# rain-turtle
-MoonMoonDogo's Rain Bot
-=======
 TurtleBot
 =========
 
@@ -37,4 +33,3 @@ Create a file called `config.json` with the following contents
 **DO NOT SHARE YOUR TOKEN WITH ANYBODY**
 
 Further instructions vary by your IDE. Project should open up straight away and bre ready to go in VS Code.
->>>>>>> Initial commit
