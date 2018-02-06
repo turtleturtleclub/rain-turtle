@@ -14,6 +14,7 @@ namespace TurtleBot.Services
         private readonly ILogger _logger;
         private readonly HttpClient _client;
         private readonly string _walletEndpoint;
+        private readonly string _rpcPassword;
 
         private int _requestId;
 
@@ -22,6 +23,7 @@ namespace TurtleBot.Services
             _logger = loggerFactory.CreateLogger("wallet");
             _client = new HttpClient();
             _walletEndpoint = $"http://{config["walletdServiceAddress"]}:{config["walletdServicePort"]}/json_rpc";
+            _rpcPassword = config["walletdRPCPassword"];
 
             _requestId = 0;
         }
@@ -73,7 +75,7 @@ namespace TurtleBot.Services
         private async Task<JObject> SendRPCRequest(string method, string parameters = "{}")
         {
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, _walletEndpoint);
-            string content = $"{{ \"jsonrpc\":\"2.0\", \"method\":\"{method}\", \"params\":{parameters}, \"id\":{_requestId++} }}";
+            string content = $"{{ \"jsonrpc\":\"2.0\", \"method\":\"{method}\", \"params\":{parameters}, \"password\":\"{_rpcPassword}\", \"id\":{_requestId++} }}";
             requestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
             HttpResponseMessage response = await _client.SendAsync(requestMessage);
 

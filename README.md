@@ -14,11 +14,12 @@ For an IDE I recommend Visual Studio Code.
 Get a bot token by making an app (instructions [here](https://discord.foxbot.me/docs/guides/getting_started/intro.html))
 
 Create a file called `config.json` with the following contents:
-```
+```json
 {
 	"token": "<your token here>",
 	"walletdServiceAddress": "localhost",
 	"walletdServicePort": 8050,
+	"walletdRPCPassword": "<RPC password here>",
 	"rainChannelId": 407757902695235584,
 	"rainCheckIntervalS": 10,
 	"rainAnnounceDelayS": 10,
@@ -30,7 +31,8 @@ Create a file called `config.json` with the following contents:
 }
 ```
 
-You also need ``walletd`` and ``turtlecoind`` running on the localhost (or on another machine). Set ``walletdServiceAddress`` and ``walletdServicePort`` accordingly.
+You also need ``walletd`` and ``turtlecoind`` running on the localhost (or on another machine).
+Set ``walletdServiceAddress``, ``walletdServicePort`` and ``walletdRPCPassword`` accordingly.
 
 **DO NOT SHARE YOUR TOKEN WITH ANYBODY**
 
