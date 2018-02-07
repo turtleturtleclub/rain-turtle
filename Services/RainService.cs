@@ -154,7 +154,6 @@ namespace TurtleBot.Services
                 if (currentBalance >= BalanceThreshold)
                 {
                     var channel = _discord.GetChannel(_channelId) as SocketTextChannel;
-                    _guildUsers = await _guild.GetUsersAsync();
                     if (channel == null)
                     {
                         // Should not happen, stop the bot if it does.
@@ -244,6 +243,7 @@ namespace TurtleBot.Services
             }
 
             _logger.LogInformation("=== ACCEPT REGISTRATION ===");
+            _guildUsers = await _guild.GetUsersAsync();
             State = RainServiceState.AcceptingRegistrations;
 
             await message.ModifyAsync(m => m.Embed = embed2);
