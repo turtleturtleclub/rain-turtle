@@ -343,7 +343,7 @@ namespace TurtleBot.Services
             long trtlPerWallet = amountPerWallet / 100.0M;
             long actualFee = balance - (amountPerWallet * walletCount);
 
-            foreach (var validUser in _wallets)
+            foreach (var walletPair in _wallets)
             {
                 var user = walletPair.Key;
                 await user.SendMessageAsync($"The rain fell on you little turtle! " + trtlPerWallet + " TRTL is on it's way to your wallet!");
