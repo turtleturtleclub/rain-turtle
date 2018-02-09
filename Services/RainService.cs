@@ -329,6 +329,16 @@ namespace TurtleBot.Services
                 TurtleWallet unused;
                 _wallets.TryRemove(_discord.GetUser(invalidUser), out unused);
             }
+
+            long currentBalanceShells = await _walletService.GetBalance(BotWallet);
+            long shellsPerUser = currentBalanceShells / _wallets.Count();
+            long trtlPerUser = shellsPerUser / 100.0M;
+
+            foreach (var validUser in _wallets)
+            {
+                var user = walletPair.Key;
+                await user.SendMessageAsync($"The rain fell on you little turtle! " + trtlPerUser + " TRTL is on it's way to your wallet!");
+            }
         }
 
         private async Task<string> MakeItRain(long balance)
