@@ -150,6 +150,7 @@ namespace TurtleBot.Services
             while (!cancellationToken.IsCancellationRequested)
             {
                 long currentBalance = await _walletService.GetBalance(BotWallet);
+                _guildUsers = await _guild.GetUsersAsync();
 
                 if (currentBalance >= BalanceThreshold)
                 {
