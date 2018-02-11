@@ -34,8 +34,9 @@ namespace TurtleBot.Modules
                         decimal missing = (_rainService.BalanceThreshold - balance) / 100.0M;
                         var embed = new EmbedBuilder()
                             .WithColor(new Color(114, 137, 218))
-                            .WithTitle($"Looks like the rain is still {missing} TRTL away...")
-                            .WithDescription($"Donate to make it rain again! ```\n{_rainService.BotWallet.Address}```")
+                            .WithTitle("See how to participate in the rain")
+                            .WithUrl(_config["rainWikiUrl"])
+                            .WithDescription($"The rain is still **{missing}** TRTL away. Donate to make it rain again! ```\n{_rainService.BotWallet.Address}```")
                             .WithThumbnailUrl(_config["rainImageUrlTRTL"])
                             .Build();
                         await ReplyAsync("", false, embed);

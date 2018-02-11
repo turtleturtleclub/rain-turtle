@@ -25,6 +25,7 @@ Create a file called `config.json` with the following contents:
 	"rainAnnounceDelayS": 10,
 	"rainRegisterDelayS": 90,
 	"rainBalanceThreshold": 100000,
+	"rainWikiUrl": "<howto raindance wiki url>",
 	"rainImageUrlAnnouncement": "<image url>",
 	"rainImageUrlRegistration": "<image url>",
 	"rainImageUrlTRTL": "<image url>"
