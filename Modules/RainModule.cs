@@ -22,6 +22,7 @@ namespace TurtleBot.Modules
 
         [Command("rain")]
         [Summary("Checks the weather")]
+        [RequireBotPermission(ChannelPermission.SendMessages)]
         public async Task Rain([Remainder] string ignore = null)
         {
             try
@@ -60,6 +61,7 @@ namespace TurtleBot.Modules
 
         [Command("rain")]
         [Summary("Controls the rain function")]
+        [RequireBotPermission(ChannelPermission.SendMessages)]
         [RequireOwner]
         public async Task Rain(string subCommand, [Remainder] string ignore = null)
         {
