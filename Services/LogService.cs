@@ -21,6 +21,7 @@ namespace TurtleBot.Services
             _commands = commands;
 
             _loggerFactory = ConfigureLogging(loggerFactory);
+            _loggerFactory.AddFile("Logs/rain.txt");
             _discordLogger = _loggerFactory.CreateLogger("discord");
             _commandsLogger = _loggerFactory.CreateLogger("commands");
 
