@@ -274,6 +274,13 @@ namespace TurtleBot.Services
             Dictionary<ulong, List<IEmote>> reactionsPerUser = new Dictionary<ulong, List<IEmote>>();
             List<ulong> invalidUsers = new List<ulong>();
 
+            var embed = new EmbedBuilder()
+                .WithColor(new Color(114, 137, 218))
+                .WithTitle($"REGISTRATION CLOSED! LET'S SEE WHO WAS A GOOD TURTLE")
+                .WithImageUrl(_config["rainImageUrlFilter"])
+                .Build();
+            await message.ModifyAsync(m => m.Embed = embed);
+
             foreach (var emote in message.Reactions.Keys)
             {
                 Emote guildEmote = emote as Emote;
@@ -297,6 +304,8 @@ namespace TurtleBot.Services
                     _logger.LogCritical(e.Message, e);
                 }
             }
+
+            await message.RemoveAllReactionsAsync();
 
             foreach (var walletPair in _wallets)
             {
@@ -345,8 +354,16 @@ namespace TurtleBot.Services
 
             foreach (var walletPair in _wallets)
             {
-                var user = walletPair.Key;
-                await user.SendMessageAsync($"The rain fell on you little turtle! {amountPerWallet / 100.0M} TRTL is on its way to your wallet!");
+                try
+                {
+                    var user = walletPair.Key;
+                    _logger.LogInformation($"Notify {user}");
+                    await user.SendMessageAsync($"The rain fell on you little turtle! {amountPerWallet / 100.0M} TRTL is on its way to your wallet!");
+                }
+                catch (Exception e)
+                {
+                    _logger.LogWarning(e, "Exception while notifying user");
+                }
             }
 
             return await _walletService.SendToMany(amountPerWallet, actualFee, _wallets.Values);
