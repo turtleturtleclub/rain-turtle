@@ -20,7 +20,10 @@ namespace TurtleBot
 
         public async Task MainAsync()
         {
-            _client = new DiscordSocketClient();
+            _client = new DiscordSocketClient(new DiscordSocketConfig
+            {
+                AlwaysDownloadUsers = true
+            });
             _config = BuildConfig();
 
             var services = ConfigureServices();
