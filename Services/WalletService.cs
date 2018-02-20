@@ -80,10 +80,7 @@ namespace TurtleBot.Services
                 var responseString = await response.Content.ReadAsStringAsync();
                 return JObject.Parse(responseString);
             }
-            else
-            {
-                throw new Exception($"{(int)response.StatusCode} {response.ReasonPhrase}");
-            }
+            throw new Exception($"{(int)response.StatusCode} {response.ReasonPhrase}");
         }
     }
 }
