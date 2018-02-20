@@ -35,7 +35,7 @@ namespace TurtleBot.Services
             if (!(rawMessage is SocketUserMessage message)) return;
             if (message.Source != MessageSource.User) return;
 
-            int argPos = 0;
+            var argPos = 0;
             if (!message.HasCharPrefix('!', ref argPos)) return;
 
             var context = new SocketCommandContext(_discord, message);

@@ -12,13 +12,13 @@ namespace TurtleBot
 {
     class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
             => new Program().MainAsync().GetAwaiter().GetResult();
 
         private DiscordSocketClient _client;
         private IConfiguration _config;
 
-        public async Task MainAsync()
+        private async Task MainAsync()
         {
             _client = new DiscordSocketClient(new DiscordSocketConfig
             {
@@ -57,7 +57,7 @@ namespace TurtleBot
                 .BuildServiceProvider();
         }
 
-        private IConfiguration BuildConfig()
+        private static IConfiguration BuildConfig()
         {
             return new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())

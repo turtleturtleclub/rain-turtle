@@ -5,7 +5,7 @@ namespace TurtleBot.Utilities
         public static string Format(double hashrate)
         {
             var i = 0;
-            string[] byteUnits = new []{" H", " KH", " MH", " GH", " TH", " PH" };
+            var byteUnits = new []{" H", " KH", " MH", " GH", " TH", " PH" };
             while (hashrate > 1000){
                 hashrate = hashrate / 1000;
                 i++;

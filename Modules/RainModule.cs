@@ -30,8 +30,8 @@ namespace TurtleBot.Modules
                 switch (_rainService.State)
                 {
                     case RainServiceState.CheckingBalance:
-                        long balance = await _walletService.GetBalance(_rainService.BotWallet);
-                        decimal missing = (_rainService.BalanceThreshold - balance) / 100.0M;
+                        var balance = await _walletService.GetBalance(_rainService.BotWallet);
+                        var missing = (_rainService.BalanceThreshold - balance) / 100.0M;
                         var embed = new EmbedBuilder()
                             .WithColor(new Color(114, 137, 218))
                             .WithTitle("See how to participate in the rain")
