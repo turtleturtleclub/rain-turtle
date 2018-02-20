@@ -21,25 +21,25 @@ namespace TurtleBot.Services
         private readonly WalletService _walletService;
         private readonly IConfiguration _config;
 
-        private Random _random;
-        private TimeSpan _checkInterval;
-        private TimeSpan _announceDelay;
+        private readonly Random _random;
+        private readonly TimeSpan _checkInterval;
+        private readonly TimeSpan _announceDelay;
         private TimeSpan _registerDelay;
         private Task _checkTask;
         private CancellationTokenSource _checkCanellationTokenSource;
-        private ConcurrentDictionary<SocketUser, TurtleWallet> _wallets;
-        private ConcurrentDictionary<ulong, Emote> _requiredReactions;
+        private readonly ConcurrentDictionary<SocketUser, TurtleWallet> _wallets;
+        private readonly ConcurrentDictionary<ulong, Emote> _requiredReactions;
 
-        private ulong _channelId;
+        private readonly ulong _channelId;
         private ulong _exiledRoleId;
-        private ulong _guildId;
+        private readonly ulong _guildId;
         private IGuild _guild;
         private IReadOnlyCollection<IGuildUser> _guildUsers;
 
         public RainServiceState State { get; private set; }
         public long BalanceThreshold { get; private set; }
         public TurtleWallet BotWallet { get; private set; }
-        public List<Emote> ReactionEmotes { get; private set; }
+        private List<Emote> ReactionEmotes { get; set; }
 
         public RainService(ILoggerFactory loggerFactory, DiscordSocketClient discord, WalletService walletService, IConfiguration config)
         {
@@ -71,15 +71,13 @@ namespace TurtleBot.Services
         {
             try
             {
-                if (State == RainServiceState.Stopped)
-                {
-                    _guild = _discord.GetGuild(_guildId);
-                    _exiledRoleId = _guild.Roles.Where(r => r.Name == "exiled").First().Id;
-                    _guildUsers = await _guild.GetUsersAsync();
-                    BotWallet = await _walletService.GetFirstAddress();
-                    _checkCanellationTokenSource = new CancellationTokenSource();
-                    _checkTask = Task.Run(() => CheckBalanceLoop(_checkInterval, _checkCanellationTokenSource.Token));
-                }
+                if (State != RainServiceState.Stopped) return;
+                _guild = _discord.GetGuild(_guildId);
+                _exiledRoleId = _guild.Roles.First(r => r.Name == "exiled").Id;
+                _guildUsers = await _guild.GetUsersAsync();
+                BotWallet = await _walletService.GetFirstAddress();
+                _checkCanellationTokenSource = new CancellationTokenSource();
+                _checkTask = Task.Run(() => CheckBalanceLoop(_checkInterval, _checkCanellationTokenSource.Token));
             }
             catch (Exception e)
             {
@@ -90,11 +88,9 @@ namespace TurtleBot.Services
 
         public async void Stop()
         {
-            if (State == RainServiceState.CheckingBalance)
-            {
-                _checkCanellationTokenSource.Cancel();
-                await _checkTask;
-            }
+            if (State != RainServiceState.CheckingBalance) return;
+            _checkCanellationTokenSource.Cancel();
+            await _checkTask;
         }
 
         private async Task MessageReceived(SocketMessage rawMessage)
@@ -103,10 +99,10 @@ namespace TurtleBot.Services
             if (!(rawMessage is SocketUserMessage message)) return;
             if (message.Source != MessageSource.User) return;
             if (!(message.Channel is SocketDMChannel)) return;
-            var guildUser = _guildUsers.Where(u => u.Id == message.Author.Id).FirstOrDefault();
+            var guildUser = _guildUsers.FirstOrDefault(u => u.Id == message.Author.Id);
             if (guildUser == null || guildUser.RoleIds.Contains(_exiledRoleId)) return;
 
-            string address = message.ToString();
+            var address = message.ToString();
             _logger.LogInformation(message.Author.Username + ": " + address);
 
             if (State != RainServiceState.AcceptingRegistrations)
@@ -116,11 +112,8 @@ namespace TurtleBot.Services
                     //await rawMessage.Author.SendMessageAsync("You are too early, little turtle, please wait for the registration!");
                     return;
                 }
-                else
-                {
-                    //await rawMessage.Author.SendMessageAsync("Huh, it doesn't look like it is raining soon...");
-                    return;
-                }
+                 //await rawMessage.Author.SendMessageAsync("Huh, it doesn't look like it is raining soon...");
+                 return;
             }
 
             if (_wallets.ContainsKey(message.Author))
@@ -129,7 +122,7 @@ namespace TurtleBot.Services
                 return;
             }
 
-            TurtleWallet wallet = await TurtleWallet.FromString(_walletService, address);
+            var wallet = await TurtleWallet.FromString(_walletService, address);
 
             if (wallet == null)
             {
@@ -143,19 +136,18 @@ namespace TurtleBot.Services
             await message.Author.SendMessageAsync($"React to the announcement message with {_requiredReactions[message.Author.Id]} (and **ONLY** with {_requiredReactions[message.Author.Id]}) to catch some shells!");
         }
 
-        public async Task CheckBalanceLoop(TimeSpan interval, CancellationToken cancellationToken)
+        private async Task CheckBalanceLoop(TimeSpan interval, CancellationToken cancellationToken)
         {
             State = RainServiceState.CheckingBalance;
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                long currentBalance = await _walletService.GetBalance(BotWallet);
+                var currentBalance = await _walletService.GetBalance(BotWallet);
                 _guildUsers = await _guild.GetUsersAsync();
 
                 if (currentBalance >= BalanceThreshold)
                 {
-                    var channel = _discord.GetChannel(_channelId) as SocketTextChannel;
-                    if (channel == null)
+                    if (!(_discord.GetChannel(_channelId) is SocketTextChannel channel))
                     {
                         // Should not happen, stop the bot if it does.
                         break;
@@ -167,8 +159,8 @@ namespace TurtleBot.Services
                     var message = await AnnounceTeaser(channel);
                     await Task.Delay(_announceDelay, cancellationToken);
 
-                    int registeredWallets = 0;
-                    string txId = "";
+                    var registeredWallets = 0;
+                    var txId = "";
                     while (registeredWallets == 0)
                     {
                         ReactionEmotes.Clear();
@@ -210,7 +202,7 @@ namespace TurtleBot.Services
             State = RainServiceState.Stopped;
         }
 
-        public async Task<RestUserMessage> AnnounceTeaser(SocketTextChannel channel)
+        private async Task<RestUserMessage> AnnounceTeaser(SocketTextChannel channel)
         {
             var embed = new EmbedBuilder()
                 .WithColor(new Color(114, 137, 218))
@@ -221,7 +213,7 @@ namespace TurtleBot.Services
             return await channel.SendMessageAsync("", false, embed);
         }
 
-        public async Task AnnounceRegistration(SocketTextChannel channel, RestUserMessage message)
+        private async Task AnnounceRegistration(SocketTextChannel channel, RestUserMessage message)
         {
             var embed1 = new EmbedBuilder()
                 .WithColor(new Color(114, 137, 218))
@@ -250,11 +242,11 @@ namespace TurtleBot.Services
             await message.ModifyAsync(m => m.Embed = embed2);
         }
 
-        public async Task AnnounceRain(SocketTextChannel channel, RestUserMessage message, CancellationToken cancellationToken, long balance, int wallets, string txId)
+        private async Task AnnounceRain(SocketTextChannel channel, RestUserMessage message, CancellationToken cancellationToken, long balance, int wallets, string txId)
         {
-            long currentBalance = await _walletService.GetBalance(BotWallet);
-            decimal missing = (BalanceThreshold - currentBalance) / 100.0M;
-            string desc = missing > 0
+            var currentBalance = await _walletService.GetBalance(BotWallet);
+            var missing = (BalanceThreshold - currentBalance) / 100.0M;
+            var desc = missing > 0
                 ? $"Donate {missing} TRTL to make it rain again! ```\n{BotWallet.Address}```"
                 : "Wait, it is still raining?!";
 
@@ -271,8 +263,8 @@ namespace TurtleBot.Services
 
         private async Task FilterWalletsByReactions(RestUserMessage message)
         {
-            Dictionary<ulong, List<IEmote>> reactionsPerUser = new Dictionary<ulong, List<IEmote>>();
-            List<ulong> invalidUsers = new List<ulong>();
+            var reactionsPerUser = new Dictionary<ulong, List<IEmote>>();
+            var invalidUsers = new List<ulong>();
 
             var embed = new EmbedBuilder()
                 .WithColor(new Color(114, 137, 218))
@@ -283,12 +275,12 @@ namespace TurtleBot.Services
 
             foreach (var emote in message.Reactions.Keys)
             {
-                Emote guildEmote = emote as Emote;
+                var guildEmote = emote as Emote;
                 try
                 {
                     var usersReacted = await message.GetReactionUsersAsync(emote.Name + ":" + guildEmote.Id);
 
-                    foreach (IUser user in usersReacted)
+                    foreach (var user in usersReacted)
                     {
                         if (!reactionsPerUser.ContainsKey(user.Id))
                         {
@@ -316,7 +308,7 @@ namespace TurtleBot.Services
                     invalidUsers.Add(user.Id);
                     _logger.LogWarning($"Filtered {user.Username} - {walletPair.Value.Address}: NO REACTION");
                 }
-                else if (!reactionsPerUser[user.Id].Any(e => e.Name == _requiredReactions[user.Id].Name))
+                else if (reactionsPerUser[user.Id].All(e => e.Name != _requiredReactions[user.Id].Name))
                 {
                     await user.SendMessageAsync($"Oh my, you did not react to the rain announcement post with {_requiredReactions[user.Id]}! No shells for you...");
                     invalidUsers.Add(user.Id);
@@ -344,13 +336,13 @@ namespace TurtleBot.Services
         private async Task<string> MakeItRain(long balance)
         {
             const long fee = 10;
-            int walletCount = _wallets.Count;
+            var walletCount = _wallets.Count;
 
             if (walletCount == 0) return string.Empty;
 
-            long availableBalance = balance - fee;
-            long amountPerWallet = availableBalance / walletCount;
-            long actualFee = balance - (amountPerWallet * walletCount);
+            var availableBalance = balance - fee;
+            var amountPerWallet = availableBalance / walletCount;
+            var actualFee = balance - (amountPerWallet * walletCount);
 
             foreach (var walletPair in _wallets)
             {

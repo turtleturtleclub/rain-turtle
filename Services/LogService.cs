@@ -29,7 +29,7 @@ namespace TurtleBot.Services
             _commands.Log += LogCommand;
         }
 
-        private ILoggerFactory ConfigureLogging(ILoggerFactory factory)
+        private static ILoggerFactory ConfigureLogging(ILoggerFactory factory)
         {
             factory.AddConsole();
             return factory;
@@ -65,7 +65,7 @@ namespace TurtleBot.Services
         }
 
         private static LogLevel LogLevelFromSeverity(LogSeverity severity)
-            => (LogLevel)(Math.Abs((int)severity - 5));
+            => (LogLevel)Math.Abs((int)severity - 5);
         
     }
 }
