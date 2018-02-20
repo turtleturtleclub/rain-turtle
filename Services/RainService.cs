@@ -29,6 +29,7 @@ namespace TurtleBot.Services
         private CancellationTokenSource _checkCanellationTokenSource;
         private readonly ConcurrentDictionary<SocketUser, TurtleWallet> _wallets;
         private readonly ConcurrentDictionary<ulong, Emote> _requiredReactions;
+        private readonly List<Emote> _reactionEmotes = new List<Emote>();
 
         private readonly ulong _channelId;
         private ulong _exiledRoleId;
@@ -37,9 +38,8 @@ namespace TurtleBot.Services
         private IReadOnlyCollection<IGuildUser> _guildUsers;
 
         public RainServiceState State { get; private set; }
-        public long BalanceThreshold { get; private set; }
+        public long BalanceThreshold { get; }
         public TurtleWallet BotWallet { get; private set; }
-        private List<Emote> ReactionEmotes { get; set; }
 
         public RainService(ILoggerFactory loggerFactory, DiscordSocketClient discord, WalletService walletService, IConfiguration config)
         {
@@ -62,7 +62,6 @@ namespace TurtleBot.Services
             // The rain service has to be started explicitly (with ``!rain start``)
             State = RainServiceState.Stopped;
             BalanceThreshold = Convert.ToInt64(config["rainBalanceThreshold"]);
-            ReactionEmotes = new List<Emote>();
 
             _discord.MessageReceived += MessageReceived;
         }
@@ -131,7 +130,7 @@ namespace TurtleBot.Services
             }
 
             _wallets[message.Author] = wallet;
-            _requiredReactions[message.Author.Id] = ReactionEmotes.RandomElement(_random);
+            _requiredReactions[message.Author.Id] = _reactionEmotes.RandomElement(_random);
 
             await message.Author.SendMessageAsync($"React to the announcement message with {_requiredReactions[message.Author.Id]} (and **ONLY** with {_requiredReactions[message.Author.Id]}) to catch some shells!");
         }
@@ -163,8 +162,8 @@ namespace TurtleBot.Services
                     var txId = "";
                     while (registeredWallets == 0)
                     {
-                        ReactionEmotes.Clear();
-                        ReactionEmotes.AddRange(channel.Guild.Emotes
+                        _reactionEmotes.Clear();
+                        _reactionEmotes.AddRange(channel.Guild.Emotes
                             .Where(e => !e.Name.StartsWith("t_"))
                             .OrderBy(x => _random.Next())
                             .Take(10));
@@ -229,7 +228,7 @@ namespace TurtleBot.Services
 
             await message.ModifyAsync(m => m.Embed = embed1);
 
-            foreach (var emote in ReactionEmotes)
+            foreach (var emote in _reactionEmotes)
             {
                 await message.AddReactionAsync(emote);
                 await Task.Delay(2500);
