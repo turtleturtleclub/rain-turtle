@@ -31,7 +31,7 @@ namespace TurtleBot
             services.GetRequiredService<WalletService>();
             await services.GetRequiredService<CommandHandlingService>().InitializeAsync(services);
 
-            await _client.LoginAsync(TokenType.User, _config["token"]);
+            await _client.LoginAsync(TokenType.Bot, _config["token"]);
             await _client.StartAsync();
 
             services.GetRequiredService<RainService>();
