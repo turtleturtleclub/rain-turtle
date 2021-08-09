@@ -80,8 +80,8 @@ namespace TurtleBot.Services
             var transfersString = "{ \"destinations\": [";
             transfersString += wallets.Aggregate(" ", (current, wallet) => current + $" {{ \"address\": \"{wallet.Address}\", \"amount\": {amountPerWallet} }} ,");
             transfersString = transfersString.Remove(transfersString.Length - 1);
-            transfersString += " ] }";
-            
+            transfersString += " ], }";
+
             _targetEndpoint = _client.BaseAddress + "transactions/send/advanced";
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, _targetEndpoint);
             var content = transfersString;
