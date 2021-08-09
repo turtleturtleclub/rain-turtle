@@ -60,7 +60,6 @@ namespace TurtleBot.Services
             HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "balances");
             response.EnsureSuccessStatusCode();
             var resp = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(resp);
             JArray jsonArray = JArray.Parse(resp);
             dynamic response_obj= JObject.Parse(jsonArray[0].ToString());
             string _address = response_obj.address;
@@ -71,7 +70,6 @@ namespace TurtleBot.Services
             HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "balance/" + wallet.Address);
             response.EnsureSuccessStatusCode();
             var resp = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(resp);
             dynamic jsonObject = JObject.Parse(resp);
             long _unlocked = jsonObject.unlocked;
             return (long) _unlocked;
@@ -85,28 +83,22 @@ namespace TurtleBot.Services
             transfersString += " ] }";
             
             _targetEndpoint = _client.BaseAddress + "transactions/send/advanced";
-            Console.WriteLine(_targetEndpoint);
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, _targetEndpoint);
             var content = transfersString;
-            Console.WriteLine(content);
             requestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
-            Console.WriteLine(requestMessage);
-            Console.WriteLine(requestMessage.Content);
             var response = await _client.SendAsync(requestMessage);
-            Console.WriteLine(response);
+            
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception($"{(int) response.StatusCode} {response.ReasonPhrase}");
             }
 
             var responseString = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(responseString);
             dynamic jsonObj = JObject.Parse(responseString);
             return (string) jsonObj;
                         
             response.EnsureSuccessStatusCode();
             var resp = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(resp);
             dynamic jsonObject = JObject.Parse(resp);
             string _transactionHash = jsonObject.transactionHash;
                         
