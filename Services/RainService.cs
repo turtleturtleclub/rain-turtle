@@ -228,7 +228,7 @@ namespace TurtleBot.Services
         {
             var embed1 = new EmbedBuilder()
                 .WithColor(new Color(114, 137, 218))
-                .WithTitle("♫ Rain on me, rain, rain. \nRAIN. ON. ME! ♫")
+                .WithTitle("♫ RAIN ON ME, RAIN, RAIN. \nRAIN. ON. ME! ♫")
                 .WithImageUrl(_config["rainImageUrlAnnouncement"])
                 .Build();
             var embed2 = new EmbedBuilder()
@@ -279,7 +279,7 @@ namespace TurtleBot.Services
 
             var embed = new EmbedBuilder()
                 .WithColor(new Color(114, 137, 218))
-                .WithTitle($"REGISTRATION CLOSED! LET'S SEE WHO WAS A GOOD TURTLE")
+                .WithTitle($"REGISTRATION CLOSED! LET'S SEE WHO WAS A GOOD TURTLE!")
                 .WithImageUrl(_config["rainImageUrlFilter"])
                 .Build();
             await message.ModifyAsync(m => m.Embed = embed);

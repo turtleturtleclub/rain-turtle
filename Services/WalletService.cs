@@ -16,6 +16,7 @@ namespace TurtleBot.Services
         private readonly string _rpcPassword;
         private string _address;
         private string _walletEndpoint;
+        private string _targetEndpoint;
         private int _requestId;
         private long _unlocked;
         private int _code;
@@ -78,20 +79,40 @@ namespace TurtleBot.Services
 
         public async Task<string> SendToMany(long amountPerWallet, long fee, IEnumerable<TurtleWallet> wallets)
         {
-            var transfersString = wallets.Aggregate("[", (current, wallet) => current + $"{{\"amount\":{amountPerWallet}, \"address\":\"{wallet.Address}\"}},");
+            var transfersString = "{ \"destinations\": [";
+            transfersString += wallets.Aggregate(" ", (current, wallet) => current + $"{{ \"address\": \"{wallet.Address}\", \"amount\": {amountPerWallet} }} ");
             transfersString = transfersString.Remove(transfersString.Length - 1);
-            transfersString += "]";
+            transfersString += "] }";
+            
+            _targetEndpoint = _client.BaseAddress + "transactions/send/advanced";
+            Console.WriteLine(_targetEndpoint);
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, _targetEndpoint);
+            var content = transfersString;
+            Console.WriteLine(content);
+            requestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
+            Console.WriteLine(requestMessage);
+            Console.WriteLine(requestMessage.Content);
+            var response = await _client.SendAsync(requestMessage);
+            Console.WriteLine(response);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"{(int) response.StatusCode} {response.ReasonPhrase}");
+            }
 
-            HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "transactions/send/advanced");
+            var responseString = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(responseString);
+            dynamic jsonObj = JObject.Parse(responseString);
+            return (string) jsonObj;
+                        
             response.EnsureSuccessStatusCode();
             var resp = await response.Content.ReadAsStringAsync();
             Console.WriteLine(resp);
             dynamic jsonObject = JObject.Parse(resp);
             string _transactionHash = jsonObject.transactionHash;
                         
-            //var response = await SendRPCRequest("sendTransaction", $"{{\"fee\":{fee}, \"anonymity\":{0}, \"transfers\":{transfersString}}}");
             return (string) _transactionHash;
         }
+
         
         private async Task<JObject> SendRPCRequest(string method, string parameters = "{}")
         {
