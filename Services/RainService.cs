@@ -228,7 +228,7 @@ namespace TurtleBot.Services
         {
             var embed1 = new EmbedBuilder()
                 .WithColor(new Color(114, 137, 218))
-                .WithTitle("IT BEGINS TO RAIN!")
+                .WithTitle("♫ Rain on me, rain, rain. \nRAIN. ON. ME! ♫")
                 .WithImageUrl(_config["rainImageUrlAnnouncement"])
                 .Build();
             var embed2 = new EmbedBuilder()
@@ -264,7 +264,7 @@ namespace TurtleBot.Services
             var embed = new EmbedBuilder()
                 .WithColor(new Color(114, 137, 218))
                 .WithTitle($"{balance / 100.0M} TRTL WAS GIVEN TO {wallets} TURTLES")
-                .WithUrl($"http://turtle-coin.com/?hash={txId}#blockchain_transaction")
+                .WithUrl($"https://explorer.turtlecoin.lol/transaction.html?hash={txId}")
                 .WithDescription(desc)
                 .WithThumbnailUrl(_config["rainImageUrlTRTL"])
                 .Build();
