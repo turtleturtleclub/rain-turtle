@@ -1,7 +1,7 @@
 import json
 from sys import argv
 
-BOT_ADDRESS = 'TRTLv3nW7vX3WXx5CRprf1ifYcY26yYPiVK9E6ocN91DKpUmqADA17n9qcE9QBCgJriGZZcbHuwwKFC8RomYVPDZah8dBN32BbZ'
+BOT_ADDRESS = 'TRTLv1m7FFnTybogRLyaaJDmmGVwae98j68L28AsZ6VxBLgHdjotEhu6HoYd4BpAiuSXLVqxbXEybHykFoH5Vr1h3HacVLo73p1'
 
 amount_transaction = 0
 amount_incoming = 0
@@ -44,7 +44,7 @@ with open(argv[1], 'r') as payments_file:
                     amount_sent_to_others += amount
 
 print('=======================================================================')
-print('Report of @TurtleBotRain (Incoming / Outgoing Balance):')
+print('Report of @FranklinRain (Incoming / Outgoing Balance):')
 print('=======================================================================')
 print('{:40} {:20,.2f} TRTL'.format('Total Amount Incoming', amount_incoming / 100))
 print('    {:36} {:20,.2f} TRTL'.format('- Total Amount Outgoing (Raw)', amount_outgoing / 100))

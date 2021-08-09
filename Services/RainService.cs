@@ -64,7 +64,7 @@ namespace TurtleBot.Services
             _wallets = new ConcurrentDictionary<SocketUser, TurtleWallet>();
             _requiredReactions = new ConcurrentDictionary<ulong, Emote>();
 
-            _guildId = 388915017187328002;
+            _guildId = 835509269373124688;
             _channelId = Convert.ToUInt64(config["rainChannelId"]);
 
             // The rain service has to be started explicitly (with ``!rain start``)
