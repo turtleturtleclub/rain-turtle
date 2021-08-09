@@ -26,28 +26,26 @@ namespace TurtleBot.Services
         {
             _logger = loggerFactory.CreateLogger("wallet");
             _walletEndpoint = $"http://{config["walletdServiceAddress"]}:{config["walletdServicePort"]}";
-
-            var _client = new HttpClient();
+            _rpcPassword = config["walletdRPCPassword"];
+            
+            _client = new HttpClient();
             _client.BaseAddress = new Uri(_walletEndpoint);
             _client.DefaultRequestHeaders.Add("X-API-KEY", _rpcPassword);
             _client.DefaultRequestHeaders.Accept.Add(
                 new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-            
-            _rpcPassword = config["walletdRPCPassword"];
-            
+                
             _requestId = 0;
         }
 
         public async Task<bool> CheckAddress(string address)
         {
-            HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "/balance");
+            HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "balance");
             try 
             {
                 response.EnsureSuccessStatusCode();
                 var resp = await response.Content.ReadAsStringAsync();
-                JArray jsonArray = JArray.Parse(resp);
-                dynamic response_obj= JObject.Parse(jsonArray[0].ToString());
-                string _address = response_obj.address;
+                dynamic jsonObject = JObject.Parse(resp);
+                string _address = jsonObject.address;
             }
             catch (HttpRequestException)    
             {
@@ -59,23 +57,22 @@ namespace TurtleBot.Services
 
         public async Task<TurtleWallet> GetFirstAddress()
         {
-            HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "/balance");
+            HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "balance");
             response.EnsureSuccessStatusCode();
             var resp = await response.Content.ReadAsStringAsync();
-            JArray jsonArray = JArray.Parse(resp);
-            dynamic response_obj= JObject.Parse(jsonArray[0].ToString());
-            string _address = response_obj.address;
+            Console.WriteLine(resp);
+            dynamic jsonObject = JObject.Parse(resp);
+            string _address = jsonObject.address;
             return await TurtleWallet.FromString(this, _address);
         }
         public async Task<long> GetBalance(TurtleWallet wallet)
         {
-            HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "/balance/" + wallet.Address);
-            Console.WriteLine(response);
+            HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "balance/" + wallet.Address);
             response.EnsureSuccessStatusCode();
             var resp = await response.Content.ReadAsStringAsync();
-            JArray jsonArray = JArray.Parse(resp);
-            dynamic response_obj= JObject.Parse(jsonArray[0].ToString());
-            long _unlocked = response_obj.unlocked;
+            Console.WriteLine(resp);
+            dynamic jsonObject = JObject.Parse(resp);
+            long _unlocked = jsonObject.unlocked;
             return (long) _unlocked;
         }
 
