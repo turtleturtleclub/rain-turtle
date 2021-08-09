@@ -80,9 +80,9 @@ namespace TurtleBot.Services
         public async Task<string> SendToMany(long amountPerWallet, long fee, IEnumerable<TurtleWallet> wallets)
         {
             var transfersString = "{ \"destinations\": [";
-            transfersString += wallets.Aggregate(" ", (current, wallet) => current + $"{{ \"address\": \"{wallet.Address}\", \"amount\": {amountPerWallet} }} ");
+            transfersString += wallets.Aggregate(" ", (current, wallet) => current + $" {{ \"address\": \"{wallet.Address}\", \"amount\": {amountPerWallet} }} ,");
             transfersString = transfersString.Remove(transfersString.Length - 1);
-            transfersString += "] }";
+            transfersString += " ] }";
             
             _targetEndpoint = _client.BaseAddress + "transactions/send/advanced";
             Console.WriteLine(_targetEndpoint);

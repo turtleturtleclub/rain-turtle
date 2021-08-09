@@ -228,7 +228,7 @@ namespace TurtleBot.Services
         {
             var embed1 = new EmbedBuilder()
                 .WithColor(new Color(114, 137, 218))
-                .WithTitle("♫ RAIN ON ME, RAIN, RAIN. \nRAIN. ON. ME! ♫")
+                .WithTitle("WAIT FOR IT...  ♫ RAIN ON ME, RAIN, RAIN. \nRAIN. ON. ME! ♫")
                 .WithImageUrl(_config["rainImageUrlAnnouncement"])
                 .Build();
             var embed2 = new EmbedBuilder()
@@ -346,12 +346,14 @@ namespace TurtleBot.Services
 
         private async Task<string> MakeItRain(long balance)
         {
-            const long fee = 10;
+            const long fee = 6500;
+            const long nodefee = 1000;
+
             var walletCount = _wallets.Count;
 
             if (walletCount == 0) return string.Empty;
 
-            var availableBalance = balance - fee;
+            var availableBalance = balance - fee - nodefee;
             var amountPerWallet = availableBalance / walletCount;
             var actualFee = balance - (amountPerWallet * walletCount);
 

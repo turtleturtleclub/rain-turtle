@@ -78,7 +78,7 @@ namespace TurtleBot.Modules
                 case "reset":
                     _config.Reset();
 
-                    await ReplyAsync("Succses: All configuration values have been reset");
+                    await ReplyAsync("Success: All configuration values have been reset");
                     break;
                 default:
 
