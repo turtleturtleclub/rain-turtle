@@ -54,15 +54,15 @@ namespace TurtleBot.Services
             // Application code 7 means bad address.
             return _code != 7;
         }
-
         public async Task<TurtleWallet> GetFirstAddress()
         {
-            HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "balance");
+            HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "balances");
             response.EnsureSuccessStatusCode();
             var resp = await response.Content.ReadAsStringAsync();
             Console.WriteLine(resp);
-            dynamic jsonObject = JObject.Parse(resp);
-            string _address = jsonObject.address;
+            JArray jsonArray = JArray.Parse(resp);
+            dynamic response_obj= JObject.Parse(jsonArray[0].ToString());
+            string _address = response_obj.address;
             return await TurtleWallet.FromString(this, _address);
         }
         public async Task<long> GetBalance(TurtleWallet wallet)
@@ -81,9 +81,16 @@ namespace TurtleBot.Services
             var transfersString = wallets.Aggregate("[", (current, wallet) => current + $"{{\"amount\":{amountPerWallet}, \"address\":\"{wallet.Address}\"}},");
             transfersString = transfersString.Remove(transfersString.Length - 1);
             transfersString += "]";
-            
-            var response = await SendRPCRequest("sendTransaction", $"{{\"fee\":{fee}, \"anonymity\":{0}, \"transfers\":{transfersString}}}");
-            return (string)response["result"]["transactionHash"];
+
+            HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "transactions/send/advanced");
+            response.EnsureSuccessStatusCode();
+            var resp = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(resp);
+            dynamic jsonObject = JObject.Parse(resp);
+            string _transactionHash = jsonObject.transactionHash;
+                        
+            //var response = await SendRPCRequest("sendTransaction", $"{{\"fee\":{fee}, \"anonymity\":{0}, \"transfers\":{transfersString}}}");
+            return (string) _transactionHash;
         }
         
         private async Task<JObject> SendRPCRequest(string method, string parameters = "{}")
