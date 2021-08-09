@@ -113,22 +113,5 @@ namespace TurtleBot.Services
             return (string) _transactionHash;
         }
 
-        
-        private async Task<JObject> SendRPCRequest(string method, string parameters = "{}")
-        {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, _walletEndpoint);
-            var content = $"{{ \"jsonrpc\":\"2.0\", \"method\":\"{method}\", \"params\":{parameters}, \"password\":\"{_rpcPassword}\", \"id\":{_requestId++} }}";
-            requestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
-            Console.WriteLine(requestMessage);
-            var response = await _client.SendAsync(requestMessage);
-            Console.WriteLine(response);
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception($"{(int) response.StatusCode} {response.ReasonPhrase}");
-            }
-
-            var responseString = await response.Content.ReadAsStringAsync();
-            return JObject.Parse(responseString);
-        }
     }
 }
