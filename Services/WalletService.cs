@@ -91,11 +91,11 @@ namespace TurtleBot.Services
             var response = await _client.SendAsync(requestMessage);
             response.EnsureSuccessStatusCode();
 
-            var resp = await response.Content.ReadAsync();
+            var resp = await response.Content.ReadAsStringAsync();
             dynamic jsonObject = JObject.Parse(resp);
-            long actFee = jsonObject.fee;
+            float actFee = jsonObject.fee;
             Console.WriteLine(actFee);
-            return (long) actFee;
+            return (float) actFee;
             
             _targetEndpoint = _client.BaseAddress + "transactions/send/advanced";
             var postMessage = new HttpRequestMessage(HttpMethod.Post, _targetEndpoint);
