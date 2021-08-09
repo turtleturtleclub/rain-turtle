@@ -18,9 +18,9 @@ Create a file called `config.json` with the following contents:
 {
 	"token": "<your token here>",
 	"walletdServiceAddress": "localhost",
-	"walletdServicePort": 8050,
+	"walletdServicePort": 8070,
 	"walletdRPCPassword": "<RPC password here>",
-	"rainChannelId": 407757902695235584,
+	"rainChannelId": <Discord ChannelID>,
 	"rainCheckIntervalS": 10,
 	"rainAnnounceDelayS": 10,
 	"rainRegisterDelayS": 90,
@@ -32,7 +32,7 @@ Create a file called `config.json` with the following contents:
 }
 ```
 
-You also need ``walletd`` and ``turtlecoind`` running on the localhost (or on another machine).
+You also need ``wallet-api`` and ``turtlecoind`` running on the localhost (or on another machine).
 Set ``walletdServiceAddress``, ``walletdServicePort`` and ``walletdRPCPassword`` accordingly.
 
 **DO NOT SHARE YOUR TOKEN WITH ANYBODY**
