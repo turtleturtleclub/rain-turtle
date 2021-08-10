@@ -17,9 +17,9 @@ Create a file called `config.json` with the following contents:
 ```json
 {
 	"token": "<your token here>",
-	"walletdServiceAddress": "localhost",
-	"walletdServicePort": 8070,
-	"walletdRPCPassword": "<RPC password here>",
+	"walletapiServiceAddress": "localhost",
+	"walletapiServicePort": 8070,
+	"walletapiRPCPassword": "<RPC password here>",
 	"rainChannelId": 012345678987654321,
 	"rainCheckIntervalS": 10,
 	"rainAnnounceDelayS": 10,
