@@ -1,7 +1,7 @@
-TurtleBotRain
+FranklinRain
 =============
 
-This is the source for TurtleBotRain, used on the [TurtleCoin](https://discord.gg/UKsNX6F) discord server.
+This is the source for FranklinRain, used on the [TurtleTurtle.Club House](https://discord.gg/aNtpq6qGk3) Discord server.
 
 ## Setting Up
 
@@ -35,7 +35,7 @@ Create a file called `config.json` with the following contents:
 ```
 
 You also need ``wallet-api`` and ``turtlecoind`` running on the localhost (or on another machine).
-Set ``walletdServiceAddress``, ``walletdServicePort`` and ``walletdRPCPassword`` accordingly.
+Set ``walletapiServiceAddress``, ``walletapiServicePort`` and ``walletapiRPCPassword`` accordingly.
 
 **DO NOT SHARE YOUR TOKEN WITH ANYBODY**
 

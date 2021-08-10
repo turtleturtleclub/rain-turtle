@@ -27,8 +27,8 @@ namespace TurtleBot.Services
         public WalletService(ILoggerFactory loggerFactory, ConfigModule config)
         {
             _logger = loggerFactory.CreateLogger("wallet");
-            _walletEndpoint = $"http://{config["walletdServiceAddress"]}:{config["walletdServicePort"]}";
-            _rpcPassword = config["walletdRPCPassword"];
+            _walletEndpoint = $"http://{config["walletapiServiceAddress"]}:{config["walletapiServicePort"]}";
+            _rpcPassword = config["walletapiRPCPassword"];
             
             _client = new HttpClient();
             _client.BaseAddress = new Uri(_walletEndpoint);
