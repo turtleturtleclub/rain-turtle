@@ -81,42 +81,42 @@ namespace TurtleBot.Services
             var transfersString = "{ \"destinations\": [";
             transfersString += wallets.Aggregate(" ", (current, wallet) => current + $" {{ \"address\": \"{wallet.Address}\", \"amount\": {amountPerWallet} }} ,");
             transfersString = transfersString.Remove(transfersString.Length - 1);
-            transfersString += " ], }";
+            transfersString += " ] }";
 
             _prepareEndpoint = _client.BaseAddress + "transactions/prepare/advanced";
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, _prepareEndpoint);
             var content = transfersString;
             requestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
-
             var response = await _client.SendAsync(requestMessage);
             response.EnsureSuccessStatusCode();
 
-            var resp = await response.Content.ReadAsStringAsync();
-            dynamic jsonObject = JObject.Parse(resp);
-            float actFee = jsonObject.fee;
-            Console.WriteLine(actFee);
-            return (float) actFee;
-            
+            HttpResponseMessage resp = await _client.GetAsync(_client.BaseAddress + "node");
+            resp.EnsureSuccessStatusCode();
+            var resp1 = await resp.Content.ReadAsStringAsync();
+            dynamic jsonObj1 = JObject.Parse(resp1);
+            var nodeFee = jsonObj1.nodeFee;
+
+            var resp2 = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(resp2);
+            var netFee = jsonObject.fee;   
+                
+            fee = netFee + nodeFee;
+
             _targetEndpoint = _client.BaseAddress + "transactions/send/advanced";
             var postMessage = new HttpRequestMessage(HttpMethod.Post, _targetEndpoint);
-            var cont = transfersString;
-            postMessage.Content = new StringContent(cont, Encoding.UTF8, "application/json");
-            var resp2 = await _client.SendAsync(postMessage);
+            postMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
+            var resp3 = await _client.SendAsync(postMessage);
             
-            if (!response.IsSuccessStatusCode)
+            if (!resp3.IsSuccessStatusCode)
             {
-                throw new Exception($"{(int) response.StatusCode} {response.ReasonPhrase}");
+                throw new Exception($"{(int) resp3.StatusCode} {resp3.ReasonPhrase}");
             }
-
-            //var responseString = await response.Content.ReadAsStringAsync();
-            //dynamic jsonObj = JObject.Parse(responseString);
-            //return (string) jsonObj;
-                        
+                      
             response.EnsureSuccessStatusCode();
-            var resp3 = await response.Content.ReadAsStringAsync();
-            dynamic jsonObj = JObject.Parse(resp3);
+            var resp4 = await response.Content.ReadAsStringAsync();
+            dynamic jsonObj = JObject.Parse(resp4);
             string _transactionHash = jsonObject.transactionHash;
-                        
+
             return (string) _transactionHash;
         }
 

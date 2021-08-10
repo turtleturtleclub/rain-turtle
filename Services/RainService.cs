@@ -346,14 +346,13 @@ namespace TurtleBot.Services
 
         private async Task<string> MakeItRain(long balance)
         {
-            const long fee = 6500;
-            const long nodefee = 1000;
+            var fee = 6500;
 
             var walletCount = _wallets.Count;
 
             if (walletCount == 0) return string.Empty;
 
-            var availableBalance = balance - fee - nodefee;
+            var availableBalance = balance - fee;
             var amountPerWallet = availableBalance / walletCount;
             var actualFee = balance - (amountPerWallet * walletCount);
 

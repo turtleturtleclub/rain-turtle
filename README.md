@@ -20,7 +20,7 @@ Create a file called `config.json` with the following contents:
 	"walletdServiceAddress": "localhost",
 	"walletdServicePort": 8070,
 	"walletdRPCPassword": "<RPC password here>",
-	"rainChannelId": <Discord ChannelID>,
+	"rainChannelId": 012345678987654321,
 	"rainCheckIntervalS": 10,
 	"rainAnnounceDelayS": 10,
 	"rainRegisterDelayS": 90,
@@ -28,7 +28,8 @@ Create a file called `config.json` with the following contents:
 	"rainWikiUrl": "<howto raindance wiki url>",
 	"rainImageUrlAnnouncement": "<image url>",
 	"rainImageUrlRegistration": "<image url>",
-	"rainImageUrlTRTL": "<image url>"
+	"rainImageUrlTRTL": "<image url>",
+	"nodeFee": 1000
 }
 ```
 
