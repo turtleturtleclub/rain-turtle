@@ -346,8 +346,10 @@ namespace TurtleBot.Services
 
         private async Task<string> MakeItRain(long balance)
         {
-            var fee = 6500;
-
+            long networkFee = Int64.Parse($"{_config["networkFee"]}");
+            long nodeFee = Int64.Parse($"{_config["nodeFee"]}");
+            
+            var fee = networkFee + nodeFee;
             var walletCount = _wallets.Count;
 
             if (walletCount == 0) return string.Empty;

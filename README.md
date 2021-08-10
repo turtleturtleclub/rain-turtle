@@ -29,6 +29,7 @@ Create a file called `config.json` with the following contents:
 	"rainImageUrlAnnouncement": "<image url>",
 	"rainImageUrlRegistration": "<image url>",
 	"rainImageUrlTRTL": "<image url>",
+	"networkFee": 6500,
 	"nodeFee": 1000
 }
 ```

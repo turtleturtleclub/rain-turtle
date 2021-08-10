@@ -75,7 +75,6 @@ namespace TurtleBot.Services
             long _unlocked = jsonObject.unlocked;
             return (long) _unlocked;
         }
-
         public async Task<string> SendToMany(long amountPerWallet, long fee, IEnumerable<TurtleWallet> wallets)
         {
             var transfersString = "{ \"destinations\": [";
@@ -83,42 +82,24 @@ namespace TurtleBot.Services
             transfersString = transfersString.Remove(transfersString.Length - 1);
             transfersString += " ] }";
 
-            _prepareEndpoint = _client.BaseAddress + "transactions/prepare/advanced";
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, _prepareEndpoint);
+            _targetEndpoint = _client.BaseAddress + "transactions/send/advanced";
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, _targetEndpoint);
             var content = transfersString;
             requestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
             var response = await _client.SendAsync(requestMessage);
             response.EnsureSuccessStatusCode();
-
-            HttpResponseMessage resp = await _client.GetAsync(_client.BaseAddress + "node");
-            resp.EnsureSuccessStatusCode();
-            var resp1 = await resp.Content.ReadAsStringAsync();
-            dynamic jsonObj1 = JObject.Parse(resp1);
-            var nodeFee = jsonObj1.nodeFee;
-
-            var resp2 = await response.Content.ReadAsStringAsync();
-            dynamic jsonObject = JObject.Parse(resp2);
-            var netFee = jsonObject.fee;   
-                
-            fee = netFee + nodeFee;
-
-            _targetEndpoint = _client.BaseAddress + "transactions/send/advanced";
-            var postMessage = new HttpRequestMessage(HttpMethod.Post, _targetEndpoint);
-            postMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
-            var resp3 = await _client.SendAsync(postMessage);
             
-            if (!resp3.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                throw new Exception($"{(int) resp3.StatusCode} {resp3.ReasonPhrase}");
+                throw new Exception($"{(int) response.StatusCode} {response.ReasonPhrase}");
             }
                       
             response.EnsureSuccessStatusCode();
-            var resp4 = await response.Content.ReadAsStringAsync();
-            dynamic jsonObj = JObject.Parse(resp4);
+            var resp = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(resp);
             string _transactionHash = jsonObject.transactionHash;
 
             return (string) _transactionHash;
         }
-
     }
 }
