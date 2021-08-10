@@ -58,7 +58,7 @@ print('{:40} {:20,.2f} TRTL'.format('Difference (should be 0)', (amount_incoming
 print('=======================================================================')
 print()
 print('=======================================================================')
-print('Report of @TurtleBotRain (Amount sent to others):')
+print('Report of @FranklinRain (Amount sent to others):')
 print('=======================================================================')
 print('{:40} {:20,.2f} TRTL'.format('Total Amount Incoming', amount_incoming / 100))
 print('    {:36} {:20,.2f} TRTL'.format('- Amount sent to others', amount_sent_to_others / 100))
