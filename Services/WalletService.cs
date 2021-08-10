@@ -12,15 +12,16 @@ namespace TurtleBot.Services
     public class WalletService
     {
         private readonly ILogger _logger;
-        private HttpClient _client;
         private readonly string _rpcPassword;
+        private HttpClient _client;
         private string _address;
         private string _walletEndpoint;
         private string _targetEndpoint;
+        private string _prepareEndpoint;
         private int _requestId;
         private long _unlocked;
         private int _code;
-
+        private long _fee;
         ConfigModule config;
         
         public WalletService(ILoggerFactory loggerFactory, ConfigModule config)
@@ -74,36 +75,31 @@ namespace TurtleBot.Services
             long _unlocked = jsonObject.unlocked;
             return (long) _unlocked;
         }
-
         public async Task<string> SendToMany(long amountPerWallet, long fee, IEnumerable<TurtleWallet> wallets)
         {
             var transfersString = "{ \"destinations\": [";
             transfersString += wallets.Aggregate(" ", (current, wallet) => current + $" {{ \"address\": \"{wallet.Address}\", \"amount\": {amountPerWallet} }} ,");
             transfersString = transfersString.Remove(transfersString.Length - 1);
-            transfersString += " ], }";
+            transfersString += " ] }";
 
             _targetEndpoint = _client.BaseAddress + "transactions/send/advanced";
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, _targetEndpoint);
             var content = transfersString;
             requestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
             var response = await _client.SendAsync(requestMessage);
+            response.EnsureSuccessStatusCode();
             
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception($"{(int) response.StatusCode} {response.ReasonPhrase}");
             }
-
-            var responseString = await response.Content.ReadAsStringAsync();
-            dynamic jsonObj = JObject.Parse(responseString);
-            return (string) jsonObj;
-                        
+                      
             response.EnsureSuccessStatusCode();
             var resp = await response.Content.ReadAsStringAsync();
             dynamic jsonObject = JObject.Parse(resp);
             string _transactionHash = jsonObject.transactionHash;
-                        
+
             return (string) _transactionHash;
         }
-
     }
 }
