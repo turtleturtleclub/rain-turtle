@@ -20,7 +20,6 @@ namespace TurtleBot.Services
         private string _prepareEndpoint;
         private int _requestId;
         private long _unlocked;
-        private int _code;
         private long _fee;
         ConfigModule config;
         
@@ -41,6 +40,7 @@ namespace TurtleBot.Services
 
         public async Task<bool> CheckAddress(string address)
         {
+            int return_code = 0;
             HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "balance");
             try 
             {
@@ -51,10 +51,10 @@ namespace TurtleBot.Services
             }
             catch (HttpRequestException)    
             {
-            var _code = 7;
+                return_code = 7;
             }
             // Application code 7 means bad address.
-            return _code != 7;
+            return return_code != 7;
         }
         public async Task<TurtleWallet> GetFirstAddress()
         {
