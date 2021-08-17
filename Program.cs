@@ -67,7 +67,6 @@ namespace TurtleBot
                 // Add additional services here...
                 .BuildServiceProvider();
         }
-
         private static IConfiguration BuildConfig()
         {
             return new ConfigurationBuilder()

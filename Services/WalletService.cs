@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,15 +14,9 @@ namespace TurtleBot.Services
     {
         private readonly ILogger _logger;
         private readonly string _rpcPassword;
-        private HttpClient _client;
-        private string _address;
+        private HttpClient _client;       
         private string _walletEndpoint;
         private string _targetEndpoint;
-        private string _prepareEndpoint;
-        private int _requestId;
-        private long _unlocked;
-        private long _fee;
-        ConfigModule config;
         
         public WalletService(ILoggerFactory loggerFactory, ConfigModule config)
         {
@@ -35,12 +30,12 @@ namespace TurtleBot.Services
             _client.DefaultRequestHeaders.Accept.Add(
                 new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
                 
-            _requestId = 0;
         }
 
-        public async Task<bool> CheckAddress(string address)
+       public async Task<bool> CheckAddress(string address)
         {
-            int return_code = 0;
+            int return_code = 1;
+
             HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "balance");
             try 
             {
@@ -51,11 +46,12 @@ namespace TurtleBot.Services
             }
             catch (HttpRequestException)    
             {
-                return_code = 7;
+             return_code = 7;
             }
             // Application code 7 means bad address.
             return return_code != 7;
         }
+        
         public async Task<TurtleWallet> GetFirstAddress()
         {
             HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "balances");
@@ -85,6 +81,7 @@ namespace TurtleBot.Services
             _targetEndpoint = _client.BaseAddress + "transactions/send/advanced";
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, _targetEndpoint);
             var content = transfersString;
+            Console.WriteLine(content);
             requestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
             var response = await _client.SendAsync(requestMessage);
             response.EnsureSuccessStatusCode();

@@ -25,7 +25,7 @@ namespace TurtleBot.Services
         public async Task InitializeAsync(IServiceProvider provider)
         {
             _provider = provider;
-            await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
+            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);
             // Add additional initialization code here...
         }
 
