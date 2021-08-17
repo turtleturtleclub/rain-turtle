@@ -120,16 +120,16 @@ namespace TurtleBot.Services
             {
                 if (State == RainServiceState.BalanceExceeded)
                 {
-                    //await rawMessage.Author.SendMessageAsync("You are too early, little turtle, please wait for the registration!");
+                    await rawMessage.Author.SendMessageAsync("You are too early, little turtle, please wait for the registration!");
                     return;
                 }
-                 //await rawMessage.Author.SendMessageAsync("Huh, it doesn't look like it is raining soon...");
+                 await rawMessage.Author.SendMessageAsync("Huh, it doesn't look like it is raining soon...");
                  return;
             }
 
             if (_wallets.ContainsKey(message.Author))
             {
-                //await rawMessage.Author.SendMessageAsync("You are already registered, little turtle.");
+                await rawMessage.Author.SendMessageAsync("You are already registered, little turtle.");
                 return;
             }
 
@@ -137,7 +137,7 @@ namespace TurtleBot.Services
 
             if (wallet == null)
             {
-                //await rawMessage.Author.SendMessageAsync("Your wallet address is malformed, little turtle.");
+                await rawMessage.Author.SendMessageAsync("Your wallet address is malformed, little turtle.");
                 return;
             }
 

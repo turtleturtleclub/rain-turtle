@@ -34,7 +34,7 @@ namespace TurtleBot.Services
 
        public async Task<bool> CheckAddress(string address)
         {
-            int return_code = 1;
+            int return_code = 0;
             HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "balance");
             try 
             {
