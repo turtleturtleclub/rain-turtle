@@ -289,7 +289,9 @@ namespace TurtleBot.Services
                 var guildEmote = emote as Emote;
                 try
                 {
-                    var usersReacted = await message.GetReactionUsersAsync(emote.Name + ":" + guildEmote.Id);
+                    guildEmote = Emote.Parse("<:" + emote.Name + ":" + guildEmote.Id + ">");
+                    int limit = 500;
+                    var usersReacted = await message.GetReactionUsersAsync(guildEmote ,limit).FlattenAsync();
 
                     foreach (var user in usersReacted)
                     {
@@ -307,7 +309,6 @@ namespace TurtleBot.Services
                     _logger.LogCritical(e.Message, e);
                 }
             }
-
             await message.RemoveAllReactionsAsync();
 
             foreach (var walletPair in _wallets)
